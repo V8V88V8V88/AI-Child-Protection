@@ -1,7 +1,9 @@
 # AI-Child-Protection
 Traditional parental controls rely on manual settings, making them easy to bypass. This AI-driven system ensures real-time monitoring and adaptive content control using face detection and AI-based age estimation for smarter child protection.
- AI-Powered Child Protection System for Smartphones
- 📌 Project Overview
+
+
+ 
+📌 Project Overview
 This project introduces an AI-based face detection system designed to protect children from accessing inappropriate content on smartphones. Unlike traditional parental controls that rely on manual settings, this system **automatically detects when a child is using the device** and dynamically enforces restrictions.
 
 🚀 Key Features
