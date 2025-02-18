@@ -1,31 +1,52 @@
 # AI-Child-Protection
-Traditional parental controls rely on manual settings, making them easy to bypass. This AI-driven system ensures real-time monitoring and adaptive content control using face detection and AI-based age estimation for smarter child protection.
+This AI-driven parental control system ensures online safety for children by integrating face detection, website blocking, and real-time alerts into one automated solution. Unlike traditional parental controls, this system adapts dynamically based on who is using the device and applies restrictions accordingly.
 
+🚀 How It Works
+✅ Face Detection: Uses AI to recognize whether a child or adult is using the device.
+✅ Age Estimation: Deep learning models estimate the user’s age in real-time.
+✅ Dynamic Content Blocking: Automatically blocks inappropriate websites when a child is detected.
+✅ Parental Alerts: Sends instant email notifications to parents if a child tries to access restricted content.
 
- 
-📌 Project Overview
-This project introduces an AI-based face detection system designed to protect children from accessing inappropriate content on smartphones. Unlike traditional parental controls that rely on manual settings, this system **automatically detects when a child is using the device** and dynamically enforces restrictions.
+🔹 Why This Project is Different from Traditional Parental Controls
+1️⃣ Face Detection-Based Access Control
+✅ Your Project: Uses AI-powered facial recognition to identify children and enforce restrictions.
+❌ Traditional Controls: Require manual setup, and restrictions apply to the entire device regardless of the user.
 
-🚀 Key Features
-- ✅ Real-Time Face Detection & Age Estimation– Uses AI to recognize the user and determine if they are a child.
-- ✅ Automatic Content Filtering – Blocks adult websites, explicit apps, and unsafe content in real time.
-- ✅ Instant Mode Switching– When an adult is detected, restrictions are lifted without needing a password.
-- ✅ Secure & Hard to Bypass – Works even if the child resets the phone or switches accounts.
-- ✅ Parental Alerts & Monitoring – Sends notifications if a child attempts to access restricted content.
+2️⃣ Real-Time Content Blocking
+✅ Your Project: Dynamically blocks or unblocks content based on who is using the device at that moment.
+❌ Traditional Controls: Work on predefined settings that apply all the time unless changed manually.
 
-🛠️ How It Works
-1. The system uses the front camera to detect a face.
-2. AI-based age estimation determines if the user is a child or an adult.
-3. If a child is detected, the system automatically enables Safe Model, restricting harmful content.
-4. When an adult is detected, normal access is restored without manual intervention.
-5. If a child tries to bypass the system, parents receive an immediate alert.
+3️⃣ Automatic Switching Between Child & Adult Modes
+✅ Your Project: Instantly adapts to a new user (child/adult) using real-time face recognition.
+❌ Traditional Controls: Require passwords, PINs, or time-based restrictions that children might bypass.
 
-🔧 Technology Stack
-- Face Detection & Age Estimation – OpenCV, TensorFlow, Deep Learning Models
-- Content Filtering– Web Filtering APIs, Safe Browsing Techniques
-- Mobile App Integration – Android/iOS, AI-based Device Management
+4️⃣ AI-Based Age Estimation
+✅ Your Project: Uses machine learning to estimate the user's age and apply appropriate filters.
+❌ Traditional Controls: Depend on pre-set user profiles and manual age inputs.
 
-🔥 Future Enhancements
-- ⭐ Emotion Detection – Identify if the child is distressed while using the device.
-- ⭐ Personalized Restrictions – Adjust content filters based on the child's behavior and usage patterns.
-- ⭐ Multi-User Profiles – Support for multiple users with different access levels.
+5️⃣ Security & Monitoring
+✅ Your Project:
+
+Sends real-time alerts to parents if a child tries to access restricted content.
+Uses biometric authentication to prevent unauthorized access.
+❌ Traditional Controls:
+Only provide activity logs that parents check after the child has already accessed content.
+6️⃣ More Adaptive & Harder to Bypass
+✅ Your Project: Even if a child resets the device or switches accounts, AI-based face detection still enforces restrictions.
+❌ Traditional Controls: Can often be bypassed by resetting the device, using incognito mode, or switching accounts.
+
+🔹 Key Components of the Project
+1️⃣ Face Detection Script (face_detection.py)
+📌 Purpose: Detects faces via webcam and determines if the user is a child or adult.
+📌 Technology Used: OpenCV, DeepFace AI.
+
+2️⃣ Website Blocking Script (block_websites.py)
+📌 Purpose: Prevents access to harmful websites when a child is detected.
+📌 Technology Used: Modifies the system’s hosts file to block adult sites.
+
+3️⃣ Email Alert Script (emailalert.py)
+📌 Purpose: Sends real-time email notifications to parents when a child attempts to access restricted content.
+📌 Technology Used: Python’s smtplib for sending emails.
+
+4️⃣ Integrated AI Controller (ai.py)
+📌 Purpose: Combines all functionalities into a single automated process. It detects faces, estimates age, blocks sites if necessary, and alerts parents in real time.
