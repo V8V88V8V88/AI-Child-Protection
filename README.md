@@ -39,7 +39,7 @@ Only provide activity logs that parents check after the child has already access
 
 🔹 Key Components of the Project
 
-1️⃣ Face Detection Script (face_detection.py)
+1️⃣ Face Detection Script (FACE DETECTION NEW.py)
 
 📌 Purpose: Detects faces via webcam and determines if the user is a child or adult.📌 Technology Used: OpenCV, DeepFace AI.
 
@@ -51,6 +51,6 @@ Only provide activity logs that parents check after the child has already access
 
 📌 Purpose: Sends real-time email notifications to parents when a child attempts to access restricted content.📌 Technology Used: Python’s smtplib for sending emails.
 
-4️⃣ Integrated AI Controller (ai.py)
+4️⃣ Integrated AI Controller (main.py)
 
 📌 Purpose: Combines all functionalities into a single automated process. It detects faces, estimates age, blocks sites if necessary, and alerts parents in real time.
