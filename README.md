@@ -1,56 +1,99 @@
-# AI-Child-Protection
-This AI-driven parental control system ensures online safety for children by integrating face detection, website blocking, and real-time alerts into one automated solution. Unlike traditional parental controls, this system adapts dynamically based on who is using the device and applies restrictions accordingly.
+# AI Child Protection Monitor
 
-🚀 How It Works
+This project uses face recognition and age estimation to detect if a child is using the computer.
+If a child (estimated age < 18) is detected, it attempts to block a predefined list of websites
+by modifying the system's hosts file and sends an email alert.
 
-✅ Face Detection: Uses AI to recognize whether a child or adult is using the device.✅ Age Estimation: Deep learning models estimate the user’s age in real-time.✅ Dynamic Content Blocking: Automatically blocks inappropriate websites when a child is detected.✅ Parental Alerts: Sends instant email notifications to parents if a child tries to access restricted content.
+## Project Structure
 
-🔹 Why This Project is Different from Traditional Parental Controls
+```
+.
+├── data/
+│   └── family_dataset/   # Stores captured face images for known users
+├── models/
+│   ├── age_model.h5      # Pre-trained age estimation model
+│   ├── face_recognition_model.pkl # Trained KNN face recognizer
+│   └── label_map.pkl     # Maps numeric labels to names
+├── src/
+│   ├── __init__.py
+│   ├── dataset_creator_gui.py # GUI for capturing face images
+│   ├── main_gui.py          # Main application GUI
+│   ├── face_operations/     # Face detection/recognition/age logic
+│   │   ├── __init__.py
+│   │   ├── detector.py
+│   │   └── training.py
+│   └── system_actions/      # Website blocking and email logic
+│       ├── __init__.py
+│       ├── host_blocker.py
+│       └── email_notifier.py
+├── .venv/                   # Python virtual environment (recommended)
+├── README.md                # This file
+├── requirements.txt         # Project dependencies
+└── run_main_app.py          # Script to launch the main GUI
+```
 
-1️⃣ Face Detection-Based Access Control
+## Setup
 
-✅ This Project: Uses AI-powered facial recognition to identify children and enforce restrictions.❌ Traditional Controls: Require manual setup, and restrictions apply to the entire device regardless of the user.
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd AI-Child-Protection
+    ```
 
-2️⃣ Real-Time Content Blocking
+2.  **Create and Activate Virtual Environment (Recommended):**
+    *   Ensure you have a compatible Python version installed (e.g., Python 3.11 was used during development, as TensorFlow may not support the latest Python).
+    ```bash
+    python3.11 -m venv .venv
+    source .venv/bin/activate  # Linux/macOS
+    # .\.venv\Scripts\activate # Windows
+    ```
 
-✅ This Project: Dynamically blocks or unblocks content based on who is using the device at that moment.❌ Traditional Controls: Work on predefined settings that apply all the time unless changed manually.
+3.  **Install Dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-3️⃣ Automatic Switching Between Child & Adult Modes
+4.  **Obtain Age Model:**
+    *   You need a pre-trained age estimation model named `age_model.h5`.
+    *   Place this file inside the `models/` directory.
+    *   Models trained on the UTKFace dataset are commonly used.
 
-✅ This Project: Instantly adapts to a new user (child/adult) using real-time face recognition.❌ Traditional Controls: Require passwords, PINs, or time-based restrictions that children might bypass.
+5.  **Configure Email:**
+    *   Edit `src/system_actions/email_notifier.py`.
+    *   Set the `sender_email`, `receiver_email`.
+    *   Replace `"GENERATED_APP_PASSWORD"` with a 16-character Google App Password for the `sender_email` account (requires 2-Step Verification enabled).
 
-4️⃣ AI-Based Age Estimation
+## Usage
 
-✅ This Project: Uses machine learning to estimate the user's age and apply appropriate filters.❌ Traditional Controls: Depend on pre-set user profiles and manual age inputs.
+1.  **Create Face Dataset:**
+    *   Run the dataset creator GUI:
+        ```bash
+        python src/dataset_creator_gui.py
+        ```
+    *   Follow the prompts to enter the number of members and capture 10 face images for each.
+    *   Images will be saved in `data/family_dataset/`.
 
-5️⃣ Security & Monitoring
+2.  **Train Face Recognizer:**
+    *   Run the training script:
+        ```bash
+        python src/face_operations/training.py
+        ```
+    *   This will create/update `face_recognition_model.pkl` and `label_map.pkl` in the `models/` directory.
 
-✅ This Project:
+3.  **Run Main Application:**
+    *   **IMPORTANT:** This application modifies the system hosts file and requires **administrator/root privileges** to function correctly.
+    *   **Linux/macOS:**
+        ```bash
+        sudo python run_main_app.py
+        ```
+    *   **Windows:** Run your terminal (Command Prompt, PowerShell, etc.) **as Administrator**, navigate to the project directory, activate the virtual environment, and then run:
+        ```bash
+        python run_main_app.py
+        ```
+    *   Click "Start Monitoring" in the GUI.
 
-Sends real-time alerts to parents if a child tries to access restricted content.
+## Notes
 
-Uses biometric authentication to prevent unauthorized access.❌ Traditional Controls:
-
-Only provide activity logs that parents check after the child has already accessed content.
-
-6️⃣ More Adaptive & Harder to Bypass
-
-✅ This Project: Even if a child resets the device or switches accounts, AI-based face detection still enforces restrictions.❌ Traditional Controls: Can often be bypassed by resetting the device, using incognito mode, or switching accounts.
-
-🔹 Key Components of the Project
-
-1️⃣ Face Detection Script (FACE DETECTION NEW.py)
-
-📌 Purpose: Detects faces via webcam and determines if the user is a child or adult.📌 Technology Used: OpenCV, DeepFace AI.
-
-2️⃣ Website Blocking Script (block_websites.py)
-
-📌 Purpose: Prevents access to harmful websites when a child is detected.📌 Technology Used: Modifies the system’s hosts file to block adult sites.
-
-3️⃣ Email Alert Script (emailalert.py)
-
-📌 Purpose: Sends real-time email notifications to parents when a child attempts to access restricted content.📌 Technology Used: Python’s smtplib for sending emails.
-
-4️⃣ Integrated AI Controller (main.py)
-
-📌 Purpose: Combines all functionalities into a single automated process. It detects faces, estimates age, blocks sites if necessary, and alerts parents in real time.
+*   **Age Estimation Accuracy:** Age estimation models can be inaccurate depending on lighting, face angle, and individual variation. The `< 18` threshold might need adjustment.
+*   **Website Blocking:** Modifying the hosts file is a basic blocking method and can be bypassed. Network-level filtering or dedicated parental control software offers more robust solutions.
+*   **Permissions:** Remember the need for elevated privileges when running the main application.

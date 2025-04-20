@@ -4,7 +4,7 @@ import ssl
 def send_email_alert():
     sender_email = "your_email@gmail.com"
     receiver_email = "parent_email@gmail.com"
-    password = "your_email_password"
+    password = "GENERATED_APP_PASSWORD"
 
     subject = "🚨 Alert: Child Tried to Access Blocked Content!"
     body = "Warning! A child attempted to access a restricted website."
