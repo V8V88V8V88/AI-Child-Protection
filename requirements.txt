@@ -1,0 +1,6 @@
+# Core Libraries
+numpy
+opencv-python
+tensorflow
+scikit-learn
+PyQt6 
