@@ -21,5 +21,3 @@ def send_email_alert():
     except Exception as e:
         print(f"❌ Error sending email: {e}")
 
-# Uncomment below to test sending email separately
-# send_email_alert()

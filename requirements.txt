@@ -4,3 +4,8 @@ opencv-python
 tensorflow
 scikit-learn
 PyQt6 
+
+# Additional Dependencies
+python-daemon
+psutil
+cryptography 

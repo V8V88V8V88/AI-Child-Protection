@@ -1,23 +1,40 @@
 import os
 import platform
 import sys # To check if running as admin/root
+import subprocess
+import socket
+import tempfile
 
 # List of websites to block
 blocked_sites = [
-    "www.pornhub.com", "www.8tube.xxx", "www.redtube.com", "www.kink.com", "www.youjizz.com",
-    "www.xvideos.com", "www.youporn.com", "www.brazzers.com", "www.omegle.com", "www.paltalk.com",
-    "www.talkwithstranger.com", "www.chatroulette.com", "www.chat-avenue.com", "www.chatango.com",
-    "www.teenchat.com", "www.wireclub.com", "www.chathour.com", "www.chatzy.com", "www.chatib.us",
-    "www.e-chat.co", "www.4chan.org", "www.reddit.com", "www.somethingawful.com", "www.topix.com",
-    "www.stormfront.org", "www.bodybuilding.com", "www.kiwifarms.net", "www.voat.co", "www.8kun.top",
-    "www.incels.me", "www.match.com", "www.bumble.com", "www.meetme.com", "www.okcupid.com",
-    "www.pof.com", "www.eharmony.com", "www.zoosk.com", "www.hinge.co", "www.grindr.com",
-    "www.ashleymadison.com", "www.adultfriendfinder.com", "www.betonline.ag", "www.freespin.com",
-    "www.bovada.lv", "www.slotocash.im", "www.royalacecasino.com", "www.pokerstars.com",
-    "www.888casino.com", "www.sportsbetting.ag", "www.betway.com", "www.liveleak.com",
-    "www.bestgore.com", "www.theync.com", "www.documentingreality.com", "www.ogrish.tv",
-    "www.hackthissite.org", "www.thepiratebay.org", "www.wikileaks.org", "www.darkweblinks.net",
-    "www.illegalhack.com", "www.gab.com", "www.nationalvanguard.org", "www.dailystormer.su"
+    "www.pornhub.com", "pornhub.com", "www.8tube.xxx", "8tube.xxx", "www.redtube.com", "redtube.com", 
+    "www.kink.com", "kink.com", "www.youjizz.com", "youjizz.com", "www.xvideos.com", "xvideos.com", 
+    "www.youporn.com", "youporn.com", "www.brazzers.com", "brazzers.com", "www.omegle.com", "omegle.com", 
+    "www.paltalk.com", "paltalk.com", "www.talkwithstranger.com", "talkwithstranger.com", 
+    "www.chatroulette.com", "chatroulette.com", "www.chat-avenue.com", "chat-avenue.com", 
+    "www.chatango.com", "chatango.com", "www.teenchat.com", "teenchat.com", "www.wireclub.com", 
+    "wireclub.com", "www.chathour.com", "chathour.com", "www.chatzy.com", "chatzy.com", 
+    "www.chatib.us", "chatib.us", "www.e-chat.co", "e-chat.co", "www.4chan.org", "4chan.org", 
+    "www.reddit.com", "reddit.com", "www.somethingawful.com", "somethingawful.com", 
+    "www.topix.com", "topix.com", "www.stormfront.org", "stormfront.org", 
+    "www.bodybuilding.com", "bodybuilding.com", "www.kiwifarms.net", "kiwifarms.net", 
+    "www.voat.co", "voat.co", "www.8kun.top", "8kun.top", "www.incels.me", "incels.me", 
+    "www.match.com", "match.com", "www.bumble.com", "bumble.com", "www.meetme.com", "meetme.com", 
+    "www.okcupid.com", "okcupid.com", "www.pof.com", "pof.com", "www.eharmony.com", "eharmony.com", 
+    "www.zoosk.com", "zoosk.com", "www.hinge.co", "hinge.co", "www.grindr.com", "grindr.com", 
+    "www.ashleymadison.com", "ashleymadison.com", "www.adultfriendfinder.com", "adultfriendfinder.com", 
+    "www.betonline.ag", "betonline.ag", "www.freespin.com", "freespin.com", "www.bovada.lv", "bovada.lv", 
+    "www.slotocash.im", "slotocash.im", "www.royalacecasino.com", "royalacecasino.com", 
+    "www.pokerstars.com", "pokerstars.com", "www.888casino.com", "888casino.com", 
+    "www.sportsbetting.ag", "sportsbetting.ag", "www.betway.com", "betway.com", 
+    "www.liveleak.com", "liveleak.com", "www.bestgore.com", "bestgore.com", 
+    "www.theync.com", "theync.com", "www.documentingreality.com", "documentingreality.com", 
+    "www.ogrish.tv", "ogrish.tv", "www.hackthissite.org", "hackthissite.org", 
+    "www.thepiratebay.org", "thepiratebay.org", "www.wikileaks.org", "wikileaks.org", 
+    "www.darkweblinks.net", "darkweblinks.net", "www.illegalhack.com", "illegalhack.com", 
+    "www.gab.com", "gab.com", "www.nationalvanguard.org", "nationalvanguard.org", 
+    "www.dailystormer.su", "dailystormer.su", "www.facebook.com", "facebook.com", 
+    "m.facebook.com", "fb.com", "facebook.net", "www.facebook.net"
 ]
 
 # --- OS Detection and Hosts File Path ---
@@ -49,12 +66,74 @@ def is_admin():
     """Check if the script is running with admin/root privileges."""
     try:
         if platform.system().lower() == "windows":
-            # This is a simple check; a more robust one might involve ctypes
-            return os.getuid() == 0 # Windows admin check can be complex
+            import ctypes
+            return ctypes.windll.shell32.IsUserAnAdmin() != 0
         else:
             return os.geteuid() == 0 # POSIX check for root
     except AttributeError:
         return False # os.getuid/geteuid not available on all OSes? Default to False.
+
+def flush_dns_cache():
+    """Flush DNS cache to ensure blocks take effect immediately."""
+    system = platform.system().lower()
+    try:
+        if system == "windows":
+            subprocess.run(["ipconfig", "/flushdns"], check=True, capture_output=True)
+            return "✅ Windows DNS cache flushed."
+        elif system == "linux":
+            # Different distros have different commands
+            try:
+                # systemd-resolved
+                subprocess.run(["systemd-resolve", "--flush-caches"], check=True, capture_output=True)
+                return "✅ Linux DNS cache flushed (systemd-resolve)."
+            except (subprocess.SubprocessError, FileNotFoundError):
+                try:
+                    # nscd
+                    subprocess.run(["service", "nscd", "restart"], check=True, capture_output=True)
+                    return "✅ Linux DNS cache flushed (nscd restart)."
+                except (subprocess.SubprocessError, FileNotFoundError):
+                    return "⚠️ Could not flush DNS cache. Changes may take time to propagate."
+        elif system == "darwin":  # macOS
+            subprocess.run(["dscacheutil", "-flushcache"], check=True, capture_output=True)
+            subprocess.run(["killall", "-HUP", "mDNSResponder"], check=True, capture_output=True)
+            return "✅ macOS DNS cache flushed."
+        else:
+            return "⚠️ Unsupported OS for DNS cache flushing."
+    except Exception as e:
+        return f"⚠️ Error flushing DNS cache: {e}"
+
+def clear_browser_dns_cache():
+    """Create a file with instructions to clear browser DNS caches."""
+    system = platform.system().lower()
+    instructions = """
+BROWSER DNS CACHE CLEARING INSTRUCTIONS:
+
+Chrome:
+1. Enter chrome://net-internals/#dns in the address bar
+2. Click the "Clear host cache" button
+
+Firefox:
+1. Enter about:config in the address bar
+2. Search for "network.dnsCacheExpiration"
+3. Set it to 0 temporarily, then back to default (60)
+
+Edge:
+1. Enter edge://net-internals/#dns in the address bar
+2. Click the "Clear host cache" button
+
+Opera:
+1. Enter opera://net-internals/#dns in the address bar
+2. Click the "Clear host cache" button
+"""
+    
+    temp_dir = tempfile.gettempdir()
+    file_path = os.path.join(temp_dir, "browser_dns_instructions.txt")
+    try:
+        with open(file_path, 'w') as f:
+            f.write(instructions)
+        return file_path
+    except Exception:
+        return None
 
 # Function to block websites (adds entries if not present)
 def block_sites():
@@ -64,6 +143,14 @@ def block_sites():
         return "Error: Permission Denied. Run as Administrator/root."
 
     try:
+        # First, make sure all blocked sites have both with www and without www variants
+        complete_blocked_sites = []
+        for site in blocked_sites:
+            complete_blocked_sites.append(site)
+            # If site doesn't start with www. and doesn't already have a www. variant in the list
+            if not site.startswith("www.") and f"www.{site}" not in blocked_sites:
+                complete_blocked_sites.append(f"www.{site}")
+
         with open(hosts_path, 'r+') as file:
             content = file.read()
             lines_to_add = []
@@ -74,7 +161,7 @@ def block_sites():
                 lines_to_add.append(f"\n{block_marker_start}\n")
                 needs_update = True
 
-            for site in blocked_sites:
+            for site in complete_blocked_sites:
                 entry = f"{redirect_ip} {site}"
                 # Check if site is already blocked *within* our markers or generally
                 if entry not in content:
@@ -103,7 +190,11 @@ def block_sites():
                     if not content.endswith('\n'): file.write('\n') # Ensure newline
                     file.write("\n".join(lines_to_add))
 
-                return "✅ Sites blocked/updated successfully!"
+                # Flush DNS cache to ensure changes take effect immediately
+                dns_result = flush_dns_cache()
+                browser_instructions = clear_browser_dns_cache()
+                
+                return f"✅ Sites blocked/updated successfully! {dns_result}"
             else:
                 return "✅ Sites already blocked."
 
@@ -141,17 +232,38 @@ def unblock_sites():
                 if not in_block_section:
                     file.write(line)
 
-        return "✅ Websites unblocked successfully!"
+        # Flush DNS cache to ensure changes take effect immediately
+        dns_result = flush_dns_cache()
+        
+        return f"✅ Websites unblocked successfully! {dns_result}"
     except PermissionError:
         return "Error: Permission Denied. Run as Administrator/root."
     except Exception as e:
         return f"Error unblocking sites: {e}"
+
+def test_site_blocking(site):
+    """Test if blocking is effective for a specific site by attempting to resolve it."""
+    try:
+        ip = socket.gethostbyname(site)
+        if ip == "127.0.0.1":
+            return f"✅ Site {site} is correctly redirected to localhost."
+        else:
+            return f"⚠️ Site {site} resolves to {ip} instead of localhost. Blocking may be ineffective."
+    except socket.gaierror:
+        return f"⚠️ Could not resolve {site}. DNS resolution failed."
+    except Exception as e:
+        return f"⚠️ Error testing site blocking: {e}"
 
 # Example usage when script is run directly
 if __name__ == "__main__":
     print("Attempting to block sites...")
     status = block_sites()
     print(status)
+    
+    # Test blocking effectiveness for a common site
+    if "successfully" in status:
+        print(test_site_blocking("pornhub.com"))
+    
     # Example: Wait and unblock
     # import time
     # time.sleep(10)

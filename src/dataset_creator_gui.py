@@ -170,17 +170,7 @@ class DatasetCreatorDialog(QDialog):
                 self.member_name = current_name_input
                 self.member_folder = os.path.join(self.dataset_path, self.member_name)
                 self.count = 0 # Reset image count for the new name
-                if not os.path.exists(self.member_folder):
-                    try:
-                        os.makedirs(self.member_folder)
-                        self.update_status(f"Ready for {self.member_name} (Member {self.members_completed + 1}). Folder created.")
-                    except OSError as e:
-                        self.show_error(f"Could not create folder for {self.member_name}: {e}")
-                        self.capture_button.setEnabled(False)
-                        self.member_name = "" # Clear name on error
-                        return
-                else:
-                     self.update_status(f"Ready for {self.member_name} (Member {self.members_completed + 1}). Using existing folder.")
+                self.update_status(f"Ready for {self.member_name} (Member {self.members_completed + 1}).") # Simplified status
 
                 self.update_capture_button_state()
             # If name hasn't changed, do nothing here, allow capture button state update
@@ -262,6 +252,17 @@ class DatasetCreatorDialog(QDialog):
         if not self.member_folder or not self.face_detected or self.last_face_coords is None:
             self.update_status("Cannot capture: Ensure name is entered and face is detected.")
             return
+
+        # --- Start Addition ---
+        # Create the member folder right before saving the first image
+        if not os.path.exists(self.member_folder):
+            try:
+                os.makedirs(self.member_folder)
+                self.update_status(f"Created folder for {self.member_name}. Capturing image 1...")
+            except OSError as e:
+                self.show_error(f"Could not create folder {self.member_folder}: {e}")
+                return # Don't proceed if folder creation fails
+        # --- End Addition ---
 
         if self.count >= self.max_images:
              self.update_status(f"Already captured {self.max_images} images for {self.member_name}.")
