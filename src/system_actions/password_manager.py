@@ -20,7 +20,7 @@ class PasswordManager:
             with open(CONFIG_FILE, 'r') as f:
                 return json.load(f)
         else:
-            # Create a new configuration file with default values
+            
             config = {
                 'password_hash': '',
                 'salt': base64.b64encode(os.urandom(16)).decode('utf-8')
@@ -41,7 +41,7 @@ class PasswordManager:
         else:
             self.config['salt'] = base64.b64encode(salt).decode('utf-8')
         
-        # Create a hash of the password
+        
         hash_obj = hashlib.sha256()
         hash_obj.update(password.encode('utf-8') + salt)
         return hash_obj.hexdigest()
@@ -65,7 +65,7 @@ class PasswordManager:
         self.config['password_hash'] = password_hash
         self._save_config()
         
-        # Set the encryption key
+        
         self.key = self._derive_key(password)
         return True
     
@@ -78,7 +78,7 @@ class PasswordManager:
         result = password_hash == self.config['password_hash']
         
         if result:
-            # Set the encryption key
+            
             self.key = self._derive_key(password)
         
         return result

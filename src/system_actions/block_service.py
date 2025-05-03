@@ -9,7 +9,7 @@ import signal
 import logging
 from .host_blocker import block_sites, is_admin, hosts_path, test_site_blocking
 
-# Configure logging
+
 log_dir = os.path.join(tempfile.gettempdir(), "ai_child_protection_logs")
 os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, "block_service.log")
@@ -20,9 +20,9 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# Global variables
+
 running = True
-CHECK_INTERVAL = 300  # Check every 5 minutes
+CHECK_INTERVAL = 300  
 
 def signal_handler(sig, frame):
     """Handle termination signals"""
@@ -37,11 +37,11 @@ def create_windows_service():
         return "❌ Admin privileges required to create Windows service"
     
     try:
-        # Get the path to the Python executable
+        
         python_exe = sys.executable
         script_path = os.path.abspath(__file__)
         
-        # Create a batch file that will be called by the service
+        
         batch_dir = os.path.join(tempfile.gettempdir(), "ai_child_protection")
         os.makedirs(batch_dir, exist_ok=True)
         batch_path = os.path.join(batch_dir, "run_blocker.bat")
@@ -49,10 +49,10 @@ def create_windows_service():
         with open(batch_path, 'w') as f:
             f.write(f'@echo off\n"{python_exe}" "{script_path}" --daemon')
         
-        # Use SCHTASKS to create a scheduled task that runs at startup with highest privileges
+        
         task_name = "AIChildProtectionBlocker"
         
-        # Delete the task if it already exists
+        
         subprocess.run(
             ["schtasks", "/delete", "/tn", task_name, "/f"], 
             shell=True, 
@@ -60,7 +60,7 @@ def create_windows_service():
             stdout=subprocess.DEVNULL
         )
         
-        # Create the task
+        
         result = subprocess.run(
             [
                 "schtasks", "/create", "/tn", task_name, 
@@ -92,11 +92,11 @@ def create_linux_service():
         return "❌ Root privileges required to create Linux service"
     
     try:
-        # Get the path to the Python executable
+        
         python_exe = sys.executable
         script_path = os.path.abspath(__file__)
         
-        # Create systemd service file
+        
         service_content = f"""[Unit]
 Description=AI Child Protection Website Blocker
 After=network.target
@@ -116,7 +116,7 @@ WantedBy=multi-user.target
         with open(service_path, 'w') as f:
             f.write(service_content)
         
-        # Enable and start the service
+        
         subprocess.run(["systemctl", "daemon-reload"], check=True)
         subprocess.run(["systemctl", "enable", "aichildprotection"], check=True)
         subprocess.run(["systemctl", "start", "aichildprotection"], check=True)
@@ -161,7 +161,7 @@ def remove_linux_service():
     try:
         service_name = "aichildprotection"
         
-        # Stop and disable the service
+        
         try:
             subprocess.run(["systemctl", "stop", service_name], check=False, capture_output=True)
         except Exception as e:
@@ -172,7 +172,7 @@ def remove_linux_service():
         except Exception as e:
             logging.warning(f"Error disabling service: {e}")
         
-        # Remove the service file
+        
         service_path = f"/etc/systemd/system/{service_name}.service"
         if os.path.exists(service_path):
             try:
@@ -180,7 +180,7 @@ def remove_linux_service():
             except Exception as e:
                 logging.warning(f"Error removing service file: {e}")
         
-        # Reload systemd regardless of previous errors
+        
         try:
             subprocess.run(["systemctl", "daemon-reload"], check=False, capture_output=True)
         except Exception as e:
@@ -188,7 +188,7 @@ def remove_linux_service():
         
         logging.info("Linux service removal attempted")
         
-        # Return success even if some steps failed - we want to continue with unblocking sites
+        
         return "✅ Linux service removal attempted - check logs for detailed status"
     except Exception as e:
         logging.exception("Error removing Linux service")
@@ -234,16 +234,16 @@ def run_daemon():
     
     while running:
         try:
-            # Apply site blocking
+            
             logging.info("Checking and enforcing site blocking")
             result = block_sites()
             logging.info(f"Block result: {result}")
             
-            # Verify blocking for a test site
+            
             test_result = test_site_blocking("pornhub.com")
             logging.info(f"Block test: {test_result}")
             
-            # Sleep for the check interval
+            
             for _ in range(CHECK_INTERVAL):
                 if not running:
                     break
@@ -251,7 +251,7 @@ def run_daemon():
         
         except Exception as e:
             logging.exception(f"Error in daemon loop: {e}")
-            # Don't quit on error, just sleep and retry
+            
             time.sleep(60)
     
     logging.info("Block service daemon shutting down")

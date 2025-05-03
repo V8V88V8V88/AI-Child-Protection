@@ -13,10 +13,10 @@ def create_chrome_extension():
     """
     ext_dir = os.path.join(tempfile.gettempdir(), "ai_child_protection_extension")
     
-    # Create directory structure for extension
+    
     os.makedirs(ext_dir, exist_ok=True)
     
-    # Create manifest.json
+    
     manifest = {
         "name": "AI Child Protection",
         "version": "1.0",
@@ -42,7 +42,7 @@ def create_chrome_extension():
         }
     }
     
-    # Create background.js with blocking logic
+    
     background_js = """
 // List of sites to block
 const blockedSites = %s;
@@ -79,7 +79,7 @@ chrome.tabs.onUpdated.addListener(
 );
 """ % json.dumps(blocked_sites)
     
-    # Simple popup.html
+    
     popup_html = """
 <!DOCTYPE html>
 <html>
@@ -108,7 +108,7 @@ chrome.tabs.onUpdated.addListener(
 </html>
 """
     
-    # Blocked page
+    
     blocked_html = """
 <!DOCTYPE html>
 <html>
@@ -153,7 +153,7 @@ chrome.tabs.onUpdated.addListener(
 </html>
 """
     
-    # Write files to the extension directory
+    
     with open(os.path.join(ext_dir, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=4)
     
@@ -166,13 +166,13 @@ chrome.tabs.onUpdated.addListener(
     with open(os.path.join(ext_dir, "blocked.html"), "w") as f:
         f.write(blocked_html)
     
-    # Create simple icon files (could be replaced with real icons)
+    
     icon_sizes = [16, 48, 128]
     for size in icon_sizes:
-        # This is a placeholder for actual icon creation
-        # In a real implementation, you'd include actual icon files
+        
+        
         icon_file = os.path.join(ext_dir, f"icon{size}.png")
-        # For now, we'll just create empty files
+        
         with open(icon_file, "w") as f:
             f.write("")
     
@@ -185,10 +185,10 @@ def create_firefox_extension():
     """
     ext_dir = os.path.join(tempfile.gettempdir(), "ai_child_protection_firefox_extension")
     
-    # Create directory structure for extension
+    
     os.makedirs(ext_dir, exist_ok=True)
     
-    # Create manifest.json
+    
     manifest = {
         "name": "AI Child Protection",
         "version": "1.0",
@@ -213,7 +213,7 @@ def create_firefox_extension():
         }
     }
     
-    # Background script is similar to Chrome's with minimal changes
+    
     background_js = """
 // List of sites to block
 const blockedSites = %s;
@@ -250,7 +250,7 @@ browser.tabs.onUpdated.addListener(
 );
 """ % json.dumps(blocked_sites)
     
-    # Reuse the HTML files from Chrome extension
+    
     popup_html = """
 <!DOCTYPE html>
 <html>
@@ -323,7 +323,7 @@ browser.tabs.onUpdated.addListener(
 </html>
 """
     
-    # Write files to the extension directory
+    
     with open(os.path.join(ext_dir, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=4)
     
@@ -336,7 +336,7 @@ browser.tabs.onUpdated.addListener(
     with open(os.path.join(ext_dir, "blocked.html"), "w") as f:
         f.write(blocked_html)
     
-    # Create simple icon files (placeholder)
+    
     icon_sizes = [16, 48, 128]
     for size in icon_sizes:
         icon_file = os.path.join(ext_dir, f"icon{size}.png")
@@ -407,9 +407,9 @@ def open_extension_instructions():
         try:
             if platform.system().lower() == "windows":
                 os.startfile(result["instructions_file"])
-            elif platform.system().lower() == "darwin":  # macOS
+            elif platform.system().lower() == "darwin":  
                 os.system(f"open {result['instructions_file']}")
-            else:  # Linux
+            else:  
                 os.system(f"xdg-open {result['instructions_file']}")
             return "✅ Opened extension installation instructions."
         except Exception as e:
