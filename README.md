@@ -49,7 +49,7 @@ blocking service.
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/shrishtipandey/AI-Child-Protection.git
+git clone https://github.com/V8V88V8V88/AI-Child-Protection.git
 cd AI-Child-Protection
 ```
 
