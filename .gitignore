@@ -197,3 +197,6 @@ Thumbs.db
 
 # Ignore any log files that might be created
 *.log
+
+# Ignore configuration file
+config.json
